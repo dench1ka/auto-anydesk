@@ -1,0 +1,28 @@
++ aapt2 compile --dir /Users/denis/Projects/auto-anydesk/app/src/main/res
++ aapt2 link -I /Users/denis/Projects/auto-anydesk/.tools/android-sdk/platforms/android-35/android.jar
++ javac -source 17 -target
++ java -Xmx2g -cp /Users/denis/Projects/auto-anydesk/.gradle-user-home/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.20/4ef56b3316798316bfac7a0ae443391c9e
++ java -cp /Users/denis/Projects/auto-anydesk/.gradle-user-home/caches/modules-2/files-2.1/com.android.tools.build/builder/8.9.2/f5879953ae9f284e5c6289f62e9960bf532fdb6/builder-8.9.2.jar 
++ zipalign -f -p 4
++ apksigner sign --ks /Users/denis/Projects/auto-anydesk/.tools/debug.keystore
++ apksigner verify --verbose --min-sdk-version
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
++ zipalign -c 4 /Users/denis/Projects/auto-anydesk/artifacts/AnyDeskAutoConfirm-1.0.0-debug.apk
+APK: /Users/denis/Projects/auto-anydesk/artifacts/AnyDeskAutoConfirm-1.0.0-debug.apk
++ java -Xmx2g -cp /Users/denis/Projects/auto-anydesk/.gradle-user-home/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.20/4ef56b3316798316bfac7a0ae443391c9e
++ java -Xmx2g -cp /Users/denis/Projects/auto-anydesk/.gradle-user-home/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-compiler-embeddable/2.1.20/4ef56b3316798316bfac7a0ae443391c9e
+Instrumentation test sources compiled (not executed).
++ java -Xmx2g -Drobolectric.offline=true -Drobolectric.dependency.dir=/Users/denis/Projects/auto-anydesk/app/build/direct/robolectric-sdks
+JUnit version 4.13.2
+....................................
+Time: 1,195
+
+OK (36 tests)
+

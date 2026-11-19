@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">AnyDesk Auto Confirm</string>
+    <string name="service_description">Подтверждает только распознанный системный запрос трансляции экрана AnyDesk. Доступ к окнам нужен для поиска кнопки «НАЧАТЬ». Данные остаются на устройстве. Включайте только на своём доверенном телефоне.</string>
+    <string name="subtitle">Автоподтверждение трансляции экрана</string>
+    <string name="auto_confirm">Автоматически подтверждать AnyDesk</string>
+    <string name="remember">Устанавливать галочку "Больше не показывать"</string>
+    <string name="open_accessibility">Открыть специальные возможности</string>
+    <string name="refresh">Проверить состояние</string>
+    <string name="diagnostics">Диагностика</string>
+    <string name="notice">Автоподтверждение снижает защиту системного запроса. Используйте только на своём доверенном устройстве с настроенным неконтролируемым доступом AnyDesk.</string>
+    <string name="miui_title">Настройка MIUI 10</string>
+    <string name="miui_help">1. Включите эту службу в специальных возможностях.
+2. Разрешите автозапуск приложения.
+3. Выберите «Без ограничений» в настройках батареи.
+4. По возможности закрепите приложение в недавних.
+5. Проверьте подключение с выключенным экраном и после перезагрузки.
+
+Повторите фоновые настройки для AnyDesk и AD1. Названия разделов MIUI могут различаться.</string>
+    <string name="click_notice">Успешный ACTION_CLICK означает принятие команды Android, а не подтверждённое подключение. Результат проверяется с iPhone.</string>
+    <string name="status_active">Активна</string>
+    <string name="status_off">Не включена</string>
+    <string name="status_setup">Требуется настройка</string>
+    <string name="status_format">Служба: %1$s</string>
+    <string name="status_disabled_help">Включите службу кнопкой ниже. Автоматизация %1$s.</string>
+    <string name="status_disconnected_help">Служба разрешена в Android, но сейчас не подключена. Если статус не меняется, выключите и включите её в специальных возможностях, проверьте ограничения MIUI.</string>
+    <string name="status_missing_help">Не найден включённый пакет com.anydesk.anydeskandroid. Установите и настройте AnyDesk.</string>
+    <string name="status_ready_help">Служба подключена. Автоматизация %1$s. Проверка реального подключения выполняется с iPhone.</string>
+    <string name="enabled_word">включена</string>
+    <string name="disabled_word">выключена</string>
+    <string name="never">Ещё нет</string>
+    <string name="diagnostics_format">Последнее обнаружение: %1$s
+
+Последняя попытка: %2$s
+
+Результат: %3$s
+
+Успешных вызовов ACTION_CLICK: %4$d
+
+Последняя ошибка: %5$s
+
+Событие службы: %6$s</string>
+    <string name="settings_error">Не удалось открыть специальные возможности. Откройте их вручную в настройках Android.</string>
+</resources>
