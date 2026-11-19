@@ -10,25 +10,30 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+from project_config import APK_NAME, SOURCE_NAME, VERSION_NAME
 
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--prepare-only', action='store_true')
 parser.add_argument('--repo', help='New repository owner/name; defaults to signed-in-user/auto-anydesk')
 args = parser.parse_args()
-apk = root / 'artifacts/AnyDeskAutoConfirm-1.0.0-debug.apk'
-source_zip = root / 'artifacts/AnyDeskAutoConfirm-1.0.0-source.zip'
+apk = root / 'artifacts' / APK_NAME
+source_zip = root / 'artifacts' / SOURCE_NAME
 expected = (apk.with_suffix('.apk.sha256')).read_text().split()[0]
 if hashlib.sha256(apk.read_bytes()).hexdigest() != expected:
     raise SystemExit('APK checksum mismatch; publication cancelled.')
 
 files = [root / name for name in ['.gitignore', 'README.md', 'settings.gradle.kts', 'build.gradle.kts',
-         'gradle.properties', 'gradlew', 'gradlew.bat', 'app/build.gradle.kts']]
+         'gradle.properties', 'gradlew', 'gradlew.bat', 'app/build.gradle.kts', 'version.properties']]
 for name in ['app/src', 'gradle', 'docs', 'scripts']:
     files.extend(p for p in (root / name).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
 files.extend([apk, apk.with_suffix('.apk.sha256'), source_zip])
 for name in ['direct-build.log', 'apk-verification.txt', 'lint.txt', 'lint.xml', 'build.log', 'device-test-blocker.txt']:
     files.append(root / 'artifacts' / name)
+for name in ['audit-build.log', 'audit-apk-verification.txt', 'audit-adb-status.txt',
+             'audit-api25.txt', 'audit-api25-negative-control.txt', 'audit-lint.log']:
+    if (root / 'artifacts' / name).exists():
+        files.append(root / 'artifacts' / name)
 
 def prepare(directory):
     for source in sorted(set(files)):
@@ -68,10 +73,10 @@ existing = subprocess.run(['gh', 'repo', 'view', repo], stdout=subprocess.DEVNUL
 if existing.returncode == 0:
     raise SystemExit(f'{repo} already exists. Its history was left unchanged; choose a new name with --repo.')
 
-notes = '''AnyDesk Auto Confirm 1.0.0 — personal debug build.
+notes = f'''AnyDesk Auto Confirm {VERSION_NAME} — personal debug build.
 
 Android minSdk 25. Includes APK, SHA-256 and a source archive.
-36 JVM/Robolectric tests passed; standalone Android Lint: 0 errors, 1 warning.
+Validation results are documented in docs/AUDIT-1.0.1.md and docs/VALIDATION.md.
 Built directly with Android SDK tools because Gradle/ADB sockets were blocked in the build environment.
 Physical Xiaomi / MIUI 10 testing, screen-off operation and reboot recovery remain unverified.
 '''
@@ -87,7 +92,7 @@ with tempfile.TemporaryDirectory(prefix='anydesk-github-') as temporary:
          '--source', str(stage), '--remote', 'origin', '--push'], stage)
     notes_file = stage / 'release-notes.md'
     notes_file.write_text(notes)
-    run(['gh', 'release', 'create', 'v1.0.0', '--repo', repo, '--target', 'main',
-         '--title', 'AnyDesk Auto Confirm 1.0.0 — Debug', '--notes-file', str(notes_file),
+    run(['gh', 'release', 'create', f'v{VERSION_NAME}', '--repo', repo, '--target', 'main',
+         '--title', f'AnyDesk Auto Confirm {VERSION_NAME} — Debug', '--notes-file', str(notes_file),
          str(apk), str(apk.with_suffix('.apk.sha256')), str(source_zip)], stage)
-    print(capture(['gh', 'release', 'view', 'v1.0.0', '--repo', repo, '--json', 'url', '--jq', '.url']))
+    print(capture(['gh', 'release', 'view', f'v{VERSION_NAME}', '--repo', repo, '--json', 'url', '--jq', '.url']))

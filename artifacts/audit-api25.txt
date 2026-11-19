@@ -1,0 +1,3 @@
+APK: AnyDeskAutoConfirm-1.0.1-debug.apk; Android API 25 reference JAR: android-all-instrumented-7.1.0_r7-robolectric-r1-i7.jar
+Android framework references: 30 types, 57 methods, 4 fields
+Unresolved references: 0

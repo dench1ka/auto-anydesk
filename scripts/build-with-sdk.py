@@ -14,6 +14,7 @@ import subprocess
 import sys
 import xml.etree.ElementTree as ET
 import zipfile
+from project_config import VERSION_NAME, VERSION_CODE, APK_NAME
 
 ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
@@ -61,8 +62,8 @@ ET.register_namespace('android', 'http://schemas.android.com/apk/res/android')
 manifest = ET.parse(ROOT / 'app/src/main/AndroidManifest.xml')
 manifest.getroot().set('package', 'ru.denis.anydeskconfirm')
 ns = '{http://schemas.android.com/apk/res/android}'
-manifest.getroot().set(ns + 'versionCode', '1')
-manifest.getroot().set(ns + 'versionName', '1.0.0')
+manifest.getroot().set(ns + 'versionCode', str(VERSION_CODE))
+manifest.getroot().set(ns + 'versionName', VERSION_NAME)
 manifest.getroot().insert(0, ET.Element('uses-sdk', {ns + 'minSdkVersion': '25', ns + 'targetSdkVersion': '35'}))
 manifest.getroot().find('application').set(ns + 'debuggable', 'true')
 manifest_path = out / 'AndroidManifest.xml'
@@ -86,7 +87,9 @@ with zipfile.ZipFile(classes_jar, 'w', zipfile.ZIP_DEFLATED) as archive:
         if file.is_file():
             archive.write(file, file.relative_to(classes))
 dex = out / 'dex'
-dex.mkdir(exist_ok=True)
+if dex.exists():
+    shutil.rmtree(dex)
+dex.mkdir()
 # Use AGP's D8, which supports Kotlin 2.1 metadata. SDK 35's bundled D8 is older.
 run([java, '-cp', jar('com.android.tools.build', 'builder', '8.9.2'), 'com.android.tools.r8.D8',
      '--debug', '--min-api', '25', '--lib', android, '--output', dex,
@@ -105,9 +108,11 @@ if not key.exists():
     run([jdk / 'bin/keytool', '-genkeypair', '-keystore', key, '-storepass', 'android',
          '-keypass', 'android', '-alias', 'androiddebugkey', '-dname', 'CN=Android Debug,O=Android,C=US',
          '-keyalg', 'RSA', '-keysize', '2048', '-validity', '10000'])
-apk = ROOT / 'artifacts/AnyDeskAutoConfirm-1.0.0-debug.apk'
+apk = ROOT / 'artifacts' / APK_NAME
 apk.parent.mkdir(exist_ok=True)
 run([bt / 'apksigner', 'sign', '--ks', key, '--ks-pass', 'pass:android', '--key-pass', 'pass:android',
+     '--v1-signing-enabled', 'true', '--v2-signing-enabled', 'true', '--v3-signing-enabled', 'true',
+     '--v4-signing-enabled', 'false',
      '--out', apk, aligned])
 run([bt / 'apksigner', 'verify', '--verbose', '--min-sdk-version', '25', apk])
 run([bt / 'zipalign', '-c', '4', apk])
@@ -160,5 +165,5 @@ if args.tests:
             link.symlink_to(file)
     run([java, '-Xmx2g', '-Drobolectric.offline=true',
          f'-Drobolectric.dependency.dir={sdk_jars}',
-         '-Drobolectric.enabledSdks=25', '-cp', cp([test_classes, classes, *dependencies, android]),
+         '-Drobolectric.enabledSdks=25,35', '-cp', cp([test_classes, classes, *dependencies, android]),
          'org.junit.runner.JUnitCore', *tests])

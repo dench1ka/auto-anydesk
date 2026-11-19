@@ -1,6 +1,7 @@
 package ru.denis.anydeskconfirm
 
 import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +21,9 @@ class WindowCaptureTest {
             viewIdResourceName = viewId
             className = if (button) "android.widget.Button" else "android.widget.TextView"
             isVisibleToUser = true; isEnabled = true; isClickable = button
+            val window = AccessibilityWindowInfo.obtain()
+            shadowOf(window).setId(9)
+            shadowOf(this).setAccessibilityWindowInfo(window)
         }
     }
     private fun tree(): Pair<AccessibilityNodeInfo, AccessibilityNodeInfo> {

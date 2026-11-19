@@ -1,4 +1,7 @@
 plugins { id("com.android.application"); id("org.jetbrains.kotlin.android") }
+val appVersion = java.util.Properties().apply {
+    rootProject.file("version.properties").inputStream().use { load(it) }
+}
 android {
     namespace = "ru.denis.anydeskconfirm"
     compileSdk = 35
@@ -7,8 +10,8 @@ android {
         applicationId = "ru.denis.anydeskconfirm"
         minSdk = 25
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = appVersion.getProperty("versionCode").toInt()
+        versionName = appVersion.getProperty("versionName")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     testOptions {
@@ -26,6 +29,9 @@ android {
     signingConfigs.getByName("debug") {
         val localKey = rootProject.file(".tools/debug.keystore")
         if (localKey.exists()) storeFile = localKey
+        enableV1Signing = true
+        enableV2Signing = true
+        enableV3Signing = true
     }
 }
 dependencies {

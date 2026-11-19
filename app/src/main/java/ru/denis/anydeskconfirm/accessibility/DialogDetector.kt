@@ -44,6 +44,7 @@ object DialogDetector {
         val visible = window.nodes.filter { it.visible }
         val mentionsAnyDesk = visible.any { Regex("(?i)(?<![\\p{L}\\p{N}_])anydesk(?![\\p{L}\\p{N}_])").containsMatchIn(it.text) }
         if (!mentionsAnyDesk) return Detection()
+        if (window.windowId < 0) return Detection(rejection = "Системное окно не имеет действительного ID")
         if (!window.complete) return Detection(rejection = "Неполное дерево системного окна")
         if (!anyDeskInstalled) return Detection(rejection = "Пакет AnyDesk не установлен или отключён")
         if (window.nodes.any { it.windowId != window.windowId || it.packageName != SYSTEM_UI })

@@ -8,5 +8,6 @@ export GRADLE_USER_HOME="${GRADLE_USER_HOME:-$PWD/.gradle-user-home}"
 export ANDROID_USER_HOME="${ANDROID_USER_HOME:-$PWD/.tools/android-user}"
 mkdir -p "$ANDROID_USER_HOME" artifacts
 ./gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug assembleDebugAndroidTest "$@"
-cp app/build/outputs/apk/debug/app-debug.apk artifacts/AnyDeskAutoConfirm-1.0.0-debug.apk
+apk_name=$(python3 -c 'import sys; sys.path.insert(0, "scripts"); from project_config import APK_NAME; print(APK_NAME)')
+cp app/build/outputs/apk/debug/app-debug.apk "artifacts/$apk_name"
 python3 scripts/verify-project.py

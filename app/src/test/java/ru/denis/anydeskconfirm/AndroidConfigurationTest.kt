@@ -18,7 +18,7 @@ import ru.denis.anydeskconfirm.diagnostics.DiagnosticLogger
 import ru.denis.anydeskconfirm.settings.SettingsRepository
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [25])
+@Config(sdk = [25, 35])
 class AndroidConfigurationTest {
     private lateinit var context: Context
     @Before fun setup() {
@@ -45,10 +45,16 @@ class AndroidConfigurationTest {
         assertTrue(service.exported)
         assertTrue(service.metaData.getInt("android.accessibilityservice") != 0)
     }
-    @Test fun mainActivityInflatesOnApi25AndShowsSafeDefaults() {
+    @Test fun mainActivityInflatesAndShowsSafeDefaults() {
         Robolectric.buildActivity(MainActivity::class.java).setup().use { controller ->
             assertFalse(controller.get().findViewById<android.widget.Switch>(R.id.auto_confirm).isChecked)
             assertTrue(controller.get().findViewById<android.widget.TextView>(R.id.status).text.contains("Не включена"))
         }
+    }
+    @Test fun diagnosticAndMiuiInstructionsPreserveLineBreaks() {
+        val diagnostic = context.getString(R.string.diagnostics_format, "A", "B", "C", 1, "D", "E")
+        assertTrue(diagnostic.contains("\n\n"))
+        assertTrue(context.getString(R.string.miui_help).contains("\n2."))
+        assertTrue(context.getString(R.string.remember).contains('"'))
     }
 }

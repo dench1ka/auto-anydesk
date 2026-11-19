@@ -7,3 +7,6 @@
 *.iml
 .idea/
 __pycache__/
+/artifacts/github-upload/
+/artifacts/*.apk.idsig
+/artifacts/lint-help.txt

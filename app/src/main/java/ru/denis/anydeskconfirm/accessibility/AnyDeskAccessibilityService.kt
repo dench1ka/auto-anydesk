@@ -15,6 +15,7 @@ class AnyDeskAccessibilityService : AccessibilityService() {
     private lateinit var settings: SettingsRepository
     private lateinit var logger: DiagnosticLogger
     private var pending = false
+    private var listening = false
     private var lastRejection: String? = null
     private var lastRejectionTime = 0L
     private val check = Runnable { pending = false; inspect() }
@@ -26,16 +27,18 @@ class AnyDeskAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        stopListening()
         settings = SettingsRepository(this)
         logger = DiagnosticLogger(settings.preferences)
         settings.preferences.registerOnSharedPreferenceChangeListener(preferencesListener)
+        listening = true
         ServiceState.connected = true
         logger.lifecycle("Служба подключена Android")
         schedule(120) // One initial check; no polling loop.
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (!::settings.isInitialized || event == null || !settings.automationEnabled) return
+        if (!ServiceState.connected || !::settings.isInitialized || event == null || !settings.automationEnabled) return
         if (event.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
             event.eventType != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED &&
             event.eventType != AccessibilityEvent.TYPE_WINDOWS_CHANGED) return
@@ -46,16 +49,21 @@ class AnyDeskAccessibilityService : AccessibilityService() {
     }
 
     private fun schedule(delay: Long) {
-        if (pending || !::settings.isInitialized || !settings.automationEnabled) return
+        if (!ServiceState.connected || pending || !::settings.isInitialized || !settings.automationEnabled) return
         pending = true
         handler.postDelayed(check, delay)
     }
 
     private fun cancel() { handler.removeCallbacks(check); pending = false }
 
+    private fun stopListening() {
+        if (listening) settings.preferences.unregisterOnSharedPreferenceChangeListener(preferencesListener)
+        listening = false
+    }
+
     @Suppress("DEPRECATION")
     private fun inspect() {
-        if (!settings.automationEnabled) return
+        if (!ServiceState.connected || !settings.automationEnabled) return
         try {
             val root = rootInActiveWindow ?: return // Null/locked roots are never proof of disappearance.
             if (root.packageName?.toString() != DialogDetector.SYSTEM_UI) { root.recycle(); return }
@@ -108,6 +116,7 @@ class AnyDeskAccessibilityService : AccessibilityService() {
     override fun onUnbind(intent: android.content.Intent?): Boolean {
         ServiceState.connected = false
         cancel()
+        stopListening()
         if (::logger.isInitialized) logger.lifecycle("Служба отключена Android")
         return super.onUnbind(intent)
     }
@@ -115,7 +124,7 @@ class AnyDeskAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         ServiceState.connected = false
         cancel()
-        if (::settings.isInitialized) settings.preferences.unregisterOnSharedPreferenceChangeListener(preferencesListener)
+        stopListening()
         if (::logger.isInitialized) logger.lifecycle("Процесс службы завершает работу")
         super.onDestroy()
     }

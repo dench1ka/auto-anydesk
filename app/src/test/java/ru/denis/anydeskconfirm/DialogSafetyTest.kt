@@ -46,6 +46,7 @@ class DialogSafetyTest {
         assertNull(detect(w.copy(nodes = w.nodes + DialogNode(3, DialogDetector.SYSTEM_UI, 10))))
     }
     @Test fun rejectsTruncatedTree() { assertNull(detect(window().copy(complete = false))) }
+    @Test fun rejectsInvalidWindowIdentity() { assertNull(detect(window().copy(windowId = -1))) }
     @Test fun missingCheckboxStillAllowsConfirm() {
         val w = window(); val match = detect(w.copy(nodes = w.nodes.take(2)))!!
         assertNull(match.remember)
