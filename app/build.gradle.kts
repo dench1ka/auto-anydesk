@@ -17,6 +17,7 @@ android {
     testOptions {
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
+            it.systemProperty("ui.outputDir", "${rootDir}/artifacts/ui")
             val localRepo = rootProject.file(".tools/robolectric-m2")
             if (localRepo.exists()) {
                 it.systemProperty("maven.repo.local", localRepo.absolutePath)

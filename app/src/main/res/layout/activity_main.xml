@@ -1,20 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/page" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:fitsSystemWindows="true">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/app_name" android:textSize="26sp" android:textStyle="bold" android:textColor="#193B35" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/subtitle" android:textSize="14sp" android:layout_marginTop="6dp" />
-        <TextView android:id="@+id/status" style="@style/SectionTitle" />
-        <TextView android:id="@+id/status_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" />
-        <Switch android:id="@+id/auto_confirm" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="64dp" android:text="@string/auto_confirm" android:textSize="16sp" android:paddingEnd="4dp" android:paddingStart="0dp" android:layout_marginTop="12dp" />
-        <CheckBox android:id="@+id/remember" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:text="@string/remember" android:textSize="15sp" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/notice" android:textSize="13sp" android:layout_marginTop="8dp" />
-        <Button android:id="@+id/open_accessibility" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="56dp" android:textAllCaps="false" android:text="@string/open_accessibility" android:layout_marginTop="12dp" />
-        <Button android:id="@+id/refresh" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:textAllCaps="false" android:text="@string/refresh" />
-        <TextView style="@style/SectionTitle" android:text="@string/diagnostics" />
-        <TextView android:id="@+id/diagnostic_text" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="14sp" android:textIsSelectable="true" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/click_notice" android:textSize="13sp" android:layout_marginTop="12dp" />
-        <TextView style="@style/SectionTitle" android:text="@string/miui_title" />
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/miui_help" android:textSize="14sp" android:lineSpacingExtra="3dp" android:paddingBottom="20dp" />
+    android:id="@+id/page" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/page_background" android:fillViewport="true" android:clipToPadding="true">
+    <LinearLayout android:id="@+id/page_content" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="16dp">
+        <TextView android:id="@+id/title" style="@style/SectionTitle" android:layout_marginBottom="4dp"
+            android:text="@string/app_name" android:textSize="22sp" />
+        <TextView android:id="@+id/app_version" style="@style/BodyText" android:textSize="13sp" android:layout_marginBottom="16dp" />
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+            android:background="@drawable/surface_card" android:padding="16dp">
+            <TextView android:id="@+id/status" style="@style/SectionTitle" android:layout_marginBottom="8dp" />
+            <TextView android:id="@+id/status_help" style="@style/BodyText" />
+            <Button android:id="@+id/open_accessibility" style="@style/ActionButton" android:layout_marginTop="16dp"
+                android:text="@string/open_accessibility" android:textColor="@color/surface" android:background="@drawable/button_primary" />
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+            android:layout_marginTop="12dp" android:background="@drawable/surface_card" android:padding="16dp">
+            <LinearLayout android:id="@+id/automation_row" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:minHeight="64dp" android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:id="@+id/auto_confirm_label" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginEnd="12dp" android:text="@string/auto_confirm" android:textSize="16sp"
+                    android:textColor="@color/text_primary" android:labelFor="@id/auto_confirm" />
+                <Switch android:id="@+id/auto_confirm" android:layout_width="64dp" android:layout_height="wrap_content"
+                    android:minHeight="48dp" android:contentDescription="@string/auto_confirm" android:showText="false"
+                    android:switchMinWidth="52dp" android:thumbTint="@color/switch_thumb" android:trackTint="@color/switch_track" />
+            </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" android:layout_marginTop="8dp" android:layout_marginBottom="8dp" />
+            <LinearLayout android:id="@+id/remember_row" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:minHeight="64dp" android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:id="@+id/remember_label" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginEnd="12dp" android:text="@string/remember" android:textSize="15sp"
+                    android:textColor="@color/text_primary" android:labelFor="@id/remember" />
+                <CheckBox android:id="@+id/remember" android:layout_width="64dp" android:layout_height="wrap_content"
+                    android:minHeight="48dp" android:contentDescription="@string/remember" android:buttonTint="@color/accent" />
+            </LinearLayout>
+        </LinearLayout>
+        <TextView android:id="@+id/privacy_notice" style="@style/BodyText" android:text="@string/notice" android:textSize="14sp"
+            android:layout_marginTop="12dp" android:layout_marginBottom="16dp" />
+        <Button android:id="@+id/refresh" style="@style/ActionButton" android:text="@string/refresh" />
+        <Button android:id="@+id/toggle_diagnostics" style="@style/ActionButton" android:text="@string/show_diagnostics" android:layout_marginTop="12dp" />
+        <LinearLayout android:id="@+id/diagnostics_panel" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="@drawable/surface_card" android:padding="16dp" android:layout_marginTop="8dp" android:visibility="gone">
+            <TextView style="@style/SectionTitle" android:text="@string/diagnostics" />
+            <TextView android:id="@+id/diagnostic_text" style="@style/BodyText" android:textIsSelectable="true" />
+            <TextView style="@style/BodyText" android:text="@string/click_notice" android:textSize="14sp" android:layout_marginTop="12dp" />
+        </LinearLayout>
+        <Button android:id="@+id/toggle_miui" style="@style/ActionButton" android:text="@string/show_miui" android:layout_marginTop="12dp" />
+        <LinearLayout android:id="@+id/miui_panel" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:background="@drawable/surface_card" android:padding="16dp" android:layout_marginTop="8dp" android:visibility="gone">
+            <TextView style="@style/SectionTitle" android:text="@string/miui_title" />
+            <TextView android:id="@+id/miui_help" style="@style/BodyText" android:text="@string/miui_help" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

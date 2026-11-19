@@ -2,13 +2,14 @@
 
 Отдельное приложение на Kotlin для **Xiaomi / Android 7.1.2 (API 25) / MIUI 10**. Автоматически вызывает Accessibility `ACTION_CLICK` для кнопки «НАЧАТЬ» в распознанном запросе трансляции AnyDesk. Не зависит от Boiler Watch, MacroDroid, Google Play Services, регистрации, подписки, root или ADB во время эксплуатации.
 
-**Статус 1.0.1:** Debug APK собран настоящими Android SDK-инструментами; прошли 52 тестовых запуска JUnit/Robolectric, включая Android API 25 и 35. Все ссылки APK на Android API разрешаются на API 25. На физическом Xiaomi установка и работа ещё не подтверждены. Причина сообщённого зависания установки пока не установлена. Успешный вызов `ACTION_CLICK` не доказывает установление соединения. Работа с выключенным экраном и после перезагрузки требует приёмки на телефоне до потери физического доступа.
+**Статус 1.0.2:** интерфейс переработан после сообщения о плохой читаемости. Прошли 79 тестовых запусков JUnit/Robolectric, включая измерение разметки на API 25/35 и Native/Skia-рендеринг на API 35. Проверены 72 состояния разметки, шрифт до 200%, прокрутка и раскрытие разделов. Все ссылки APK на Android API разрешаются на API 25. Работа AnyDesk на физическом Xiaomi, с выключенным экраном и после перезагрузки разработчиком ещё не подтверждена. Успешный `ACTION_CLICK` не доказывает установление соединения.
 
 ## Поставка
 
-- APK: [`artifacts/AnyDeskAutoConfirm-1.0.1-debug.apk`](artifacts/AnyDeskAutoConfirm-1.0.1-debug.apk).
-- Контрольная сумма: [`artifacts/AnyDeskAutoConfirm-1.0.1-debug.apk.sha256`](artifacts/AnyDeskAutoConfirm-1.0.1-debug.apk.sha256).
-- Исходники: [`artifacts/AnyDeskAutoConfirm-1.0.1-source.zip`](artifacts/AnyDeskAutoConfirm-1.0.1-source.zip).
+- APK: [`artifacts/AnyDeskAutoConfirm-1.0.2-debug.apk`](artifacts/AnyDeskAutoConfirm-1.0.2-debug.apk).
+- Контрольная сумма: [`artifacts/AnyDeskAutoConfirm-1.0.2-debug.apk.sha256`](artifacts/AnyDeskAutoConfirm-1.0.2-debug.apk.sha256).
+- Исходники: [`artifacts/AnyDeskAutoConfirm-1.0.2-source.zip`](artifacts/AnyDeskAutoConfirm-1.0.2-source.zip).
+- [Проверка интерфейса 1.0.2 с рендерами](docs/UI-TESTING-1.0.2.md).
 - [Повторная проверка 1.0.1 и диагностика зависания установки](docs/AUDIT-1.0.1.md).
 - [Установка и MIUI](docs/INSTALL-MIUI.md).
 - [Проверка на Xiaomi](docs/XIAOMI-CHECKLIST.md).
@@ -25,6 +26,8 @@
 7. Выполните весь [чек-лист](docs/XIAOMI-CHECKLIST.md), включая выключенный экран, ожидание и перезагрузку, прежде чем оставлять телефон на месяцы.
 
 После настройки MainActivity не нужна для повторных подключений. Для отключения достаточно выключить основной переключатель; для полного отзыва доступа выключите службу в специальных возможностях.
+
+Вверху экрана отображается версия. Диагностика и инструкция MIUI открываются отдельными кнопками на том же экране. При крупном системном шрифте подписи и переключатели располагаются вертикально, весь экран прокручивается. Подробности визуальных проверок и их ограничения — в [отчёте 1.0.2](docs/UI-TESTING-1.0.2.md).
 
 ## Архитектура и структура
 
@@ -46,8 +49,8 @@ app/src/main/
   res/xml/accessibility_service.xml
   res/values/{strings,styles}.xml
   res/drawable/ic_app.xml
-app/src/test/                 # 52 тестовых запуска JUnit/Robolectric
-app/src/androidTest/          # 2 инструментальных теста конфигурации и настроек
+app/src/test/                 # 79 тестовых запусков JUnit/Robolectric
+app/src/androidTest/          # 3 инструментальных теста конфигурации, настроек и UI
 gradle/wrapper/               # официальный Gradle Wrapper с SHA-256 дистрибутива
 scripts/                     # обычная сборка и SDK fallback, проверки APK
 docs/                        # инструкции, приёмка, отчёт

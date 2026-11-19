@@ -20,6 +20,8 @@ ROOT = Path(__file__).resolve().parents[1]
 os.chdir(ROOT)
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--tests', action='store_true')
+parser.add_argument('--test-filter', help='Run matching test classes (for focused UI diagnostics)')
+parser.add_argument('--capture-prefix', default='current', help='Prefix for UI rendering artifacts')
 args = parser.parse_args()
 sdk = Path(os.environ['ANDROID_HOME'])
 jdk = Path(os.environ['JAVA_HOME'])
@@ -33,7 +35,10 @@ java = jdk / 'bin/java'
 def run(command):
     preview = ' '.join(str(x) for x in command[1:4])
     print('+', Path(str(command[0])).name, preview[:180], flush=True)
-    subprocess.run([str(x) for x in command], check=True)
+    try:
+        subprocess.run([str(x) for x in command], check=True)
+    except subprocess.CalledProcessError as error:
+        raise SystemExit(f'{Path(str(command[0])).name} failed with exit code {error.returncode}; see output above.') from None
 
 def jar(group, artifact, version):
     matches = list((cache / group / artifact / version).glob('*/*.jar'))
@@ -157,13 +162,19 @@ if args.tests:
     config.write_text(f'android_merged_assets={assets}\nandroid_resource_apk={resource_apk}\n'
                       f'android_custom_package=ru.denis.anydeskconfirm\nandroid_merged_manifest={manifest_path}\n')
     tests = ['ru.denis.anydeskconfirm.' + p.stem for p in sorted((ROOT / 'app/src/test/java').rglob('*Test.kt'))]
+    if args.test_filter:
+        tests = [name for name in tests if args.test_filter in name]
+        if not tests:
+            raise SystemExit('No test classes matched --test-filter')
     sdk_jars = out / 'robolectric-sdks'
     sdk_jars.mkdir(exist_ok=True)
     for file in (ROOT / '.tools/robolectric-m2').rglob('*.jar'):
         link = sdk_jars / file.name
         if not link.exists():
             link.symlink_to(file)
-    run([java, '-Xmx2g', '-Drobolectric.offline=true',
+    run([java, '-Xmx2g', '-Djava.awt.headless=true', '-Drobolectric.offline=true',
+         f'-Dui.capturePrefix={args.capture_prefix}',
+         f'-Dui.outputDir={ROOT}/artifacts/ui',
          f'-Drobolectric.dependency.dir={sdk_jars}',
          '-Drobolectric.enabledSdks=25,35', '-cp', cp([test_classes, classes, *dependencies, android]),
          'org.junit.runner.JUnitCore', *tests])

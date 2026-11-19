@@ -34,6 +34,11 @@ for name in ['audit-build.log', 'audit-apk-verification.txt', 'audit-adb-status.
              'audit-api25.txt', 'audit-api25-negative-control.txt', 'audit-lint.log']:
     if (root / 'artifacts' / name).exists():
         files.append(root / 'artifacts' / name)
+for name in ['ui-audit-build.log', 'ui-audit-lint.log', 'ui-apk-verification.txt', 'ui-api25.txt', 'ui-device-test-status.txt', 'ui-lint.txt', 'ui-lint.xml']:
+    if (root / 'artifacts' / name).is_file():
+        files.append(root / 'artifacts' / name)
+for pattern in ['before-*.png', 'current-*.png']:
+    files.extend((root / 'artifacts/ui').glob(pattern))
 
 def prepare(directory):
     for source in sorted(set(files)):
@@ -76,7 +81,7 @@ if existing.returncode == 0:
 notes = f'''AnyDesk Auto Confirm {VERSION_NAME} — personal debug build.
 
 Android minSdk 25. Includes APK, SHA-256 and a source archive.
-Validation results are documented in docs/AUDIT-1.0.1.md and docs/VALIDATION.md.
+Validation results are documented in docs/UI-TESTING-1.0.2.md and docs/AUDIT-1.0.1.md.
 Built directly with Android SDK tools because Gradle/ADB sockets were blocked in the build environment.
 Physical Xiaomi / MIUI 10 testing, screen-off operation and reboot recovery remain unverified.
 '''
