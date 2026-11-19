@@ -19,7 +19,7 @@ class DeviceConfigurationTest {
         assertEquals(Manifest.permission.BIND_ACCESSIBILITY_SERVICE, info.permission)
         assertTrue(info.metaData.getInt("android.accessibilityservice") != 0)
         @Suppress("DEPRECATION") val pkg = ctx.packageManager.getPackageInfo(ctx.packageName, PackageManager.GET_PERMISSIONS)
-        assertTrue(pkg.requestedPermissions.isNullOrEmpty())
+        assertEquals(setOf(Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.DISABLE_KEYGUARD), pkg.requestedPermissions.orEmpty().toSet())
     }
     @Test fun preferencesPersistOnDevice() {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext

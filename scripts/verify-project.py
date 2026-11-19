@@ -14,13 +14,25 @@ from project_config import VERSION_NAME, VERSION_CODE, APK_NAME
 root = Path(__file__).resolve().parents[1]
 ns = '{http://schemas.android.com/apk/res/android}'
 manifest = ET.parse(root / 'app/src/main/AndroidManifest.xml').getroot()
-assert not manifest.findall('uses-permission'), 'Unexpected requested permission'
-assert not manifest.findall('./application/receiver'), 'Unexpected receiver'
+allowed_permissions = {'android.permission.RECEIVE_BOOT_COMPLETED', 'android.permission.DISABLE_KEYGUARD'}
+assert {p.get(ns + 'name') for p in manifest.findall('uses-permission')} == allowed_permissions
+receivers = manifest.findall('./application/receiver')
+assert len(receivers) == 1
+assert receivers[0].get(ns + 'name') == '.startup.BootReceiver'
+assert receivers[0].get(ns + 'exported') == 'false'
+assert receivers[0].get(ns + 'directBootAware') == 'true'
+assert {a.get(ns + 'name') for a in receivers[0].findall('./intent-filter/action')} == {
+    'android.intent.action.BOOT_COMPLETED', 'android.intent.action.LOCKED_BOOT_COMPLETED'}
+wake = next(a for a in manifest.findall('./application/activity') if a.get(ns + 'name') == '.startup.WakeActivity')
+assert wake.get(ns + 'exported') == 'false' and wake.get(ns + 'directBootAware') == 'true'
+assert wake.get(ns + 'taskAffinity') == ''
+assert wake.get(ns + 'noHistory') == 'true' and wake.get(ns + 'excludeFromRecents') == 'true'
 services = manifest.findall('./application/service')
 assert len(services) == 1
 service = services[0]
 assert service.get(ns + 'permission') == 'android.permission.BIND_ACCESSIBILITY_SERVICE'
 assert service.get(ns + 'exported') == 'true'
+assert service.get(ns + 'directBootAware') != 'true', 'Accessibility uses credential-protected settings'
 assert service.find('meta-data').get(ns + 'resource') == '@xml/accessibility_service'
 config = ET.parse(root / 'app/src/main/res/xml/accessibility_service.xml').getroot()
 assert config.get(ns + 'canRetrieveWindowContent') == 'true'
@@ -39,7 +51,7 @@ assert "name='ru.denis.anydeskconfirm'" in badging
 assert "sdkVersion:'25'" in badging
 assert f"versionCode='{VERSION_CODE}'" in badging
 assert f"versionName='{VERSION_NAME}'" in badging
-assert 'uses-permission:' not in badging
+assert set(re.findall(r"uses-permission: name='([^']+)'", badging)) == allowed_permissions
 xml = subprocess.check_output([str(bt / 'aapt'), 'dump', 'xmltree', str(apk), 'AndroidManifest.xml'], text=True)
 assert 'android.permission.BIND_ACCESSIBILITY_SERVICE' in xml
 assert 'android.accessibilityservice.AccessibilityService' in xml

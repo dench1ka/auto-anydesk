@@ -28,4 +28,8 @@
     <string name="hide_diagnostics">Скрыть диагностику</string>
     <string name="show_miui">Настройка MIUI</string>
     <string name="hide_miui">Скрыть инструкцию MIUI</string>
+    <string name="screen_access">Режим без присмотра после загрузки</string>
+    <string name="screen_access_help">Только Android 7.1 без PIN, пароля и ключа. Пока режим и служба включены, блокировка свайпом не используется. Экран может гаснуть по обычному таймауту. После перезагрузки нужна проверка с iPhone.</string>
+    <string name="screen_access_disabled">Режим без присмотра выключен</string>
+    <string name="screen_preparing">AnyDesk Auto Confirm\n\nПодготовка экрана для удалённого доступа…\n\nОкно закроется автоматически. PIN и пароль не вводятся.</string>
 </resources>

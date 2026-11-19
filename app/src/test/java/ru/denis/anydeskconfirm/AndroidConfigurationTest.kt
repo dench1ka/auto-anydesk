@@ -27,19 +27,19 @@ class AndroidConfigurationTest {
     }
     @Test fun settingsAndDiagnosticsSurviveRepositoryRecreation() {
         val settings = SettingsRepository(context)
-        assertFalse(settings.automationEnabled); assertFalse(settings.useRemember)
-        settings.automationEnabled = true; settings.useRemember = true
+        assertFalse(settings.automationEnabled); assertFalse(settings.useRemember); assertFalse(settings.screenAccessEnabled)
+        settings.automationEnabled = true; settings.useRemember = true; settings.screenAccessEnabled = true
         DiagnosticLogger(settings.preferences).apply { detected(); attempt(true, null); attempt(false, "Ошибка теста") }
         val reopened = SettingsRepository(context)
-        assertTrue(reopened.automationEnabled); assertTrue(reopened.useRemember)
+        assertTrue(reopened.automationEnabled); assertTrue(reopened.useRemember); assertTrue(reopened.screenAccessEnabled)
         assertEquals(1L, reopened.preferences.getLong("successful_clicks", 0))
         assertTrue(reopened.preferences.getLong("last_detection", 0) > 0)
         assertEquals("Ошибка теста", reopened.preferences.getString("last_error", null))
     }
-    @Test fun manifestHasProtectedServiceAndNoRequestedPermissions() {
+    @Test fun manifestHasProtectedServiceAndOnlyTwoNormalPermissions() {
         val pm = context.packageManager
         @Suppress("DEPRECATION") val app = pm.getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-        assertTrue(app.requestedPermissions.isNullOrEmpty())
+        assertEquals(setOf(Manifest.permission.RECEIVE_BOOT_COMPLETED, Manifest.permission.DISABLE_KEYGUARD), app.requestedPermissions.orEmpty().toSet())
         @Suppress("DEPRECATION") val service = pm.getServiceInfo(ComponentName(context, AnyDeskAccessibilityService::class.java), PackageManager.GET_META_DATA)
         assertEquals(Manifest.permission.BIND_ACCESSIBILITY_SERVICE, service.permission)
         assertTrue(service.exported)

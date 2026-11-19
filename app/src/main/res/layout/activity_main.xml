@@ -34,6 +34,17 @@
                 <CheckBox android:id="@+id/remember" android:layout_width="64dp" android:layout_height="wrap_content"
                     android:minHeight="48dp" android:contentDescription="@string/remember" android:buttonTint="@color/accent" />
             </LinearLayout>
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/outline" android:layout_marginTop="8dp" android:layout_marginBottom="8dp" />
+            <LinearLayout android:id="@+id/screen_access_row" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:minHeight="64dp" android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView android:id="@+id/screen_access_label" android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginEnd="12dp" android:text="@string/screen_access" android:textSize="15sp"
+                    android:textColor="@color/text_primary" android:labelFor="@id/screen_access" />
+                <CheckBox android:id="@+id/screen_access" android:layout_width="64dp" android:layout_height="wrap_content"
+                    android:minHeight="48dp" android:contentDescription="@string/screen_access" android:buttonTint="@color/accent" />
+            </LinearLayout>
+            <TextView style="@style/BodyText" android:text="@string/screen_access_help" android:textSize="14sp" android:layout_marginTop="8dp" />
+            <TextView android:id="@+id/screen_access_status" style="@style/BodyText" android:textSize="14sp" android:layout_marginTop="8dp" />
         </LinearLayout>
         <TextView android:id="@+id/privacy_notice" style="@style/BodyText" android:text="@string/notice" android:textSize="14sp"
             android:layout_marginTop="12dp" android:layout_marginBottom="16dp" />

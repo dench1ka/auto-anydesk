@@ -15,7 +15,7 @@
         errorLine2="                                      ~~~~~">
         <location
             file="AndroidManifest.xml"
-            line="4"
+            line="6"
             column="39"/>
     </issue>
 

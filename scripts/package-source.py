@@ -14,11 +14,12 @@ for name in [APK_NAME, APK_NAME + '.sha256', 'direct-build.log', 'apk-verificati
     path = ROOT / 'artifacts' / name
     if path.is_file():
         files.append(path)
-for name in ['ui-audit-build.log', 'ui-audit-lint.log', 'ui-apk-verification.txt', 'ui-api25.txt', 'ui-device-test-status.txt', 'ui-lint.txt', 'ui-lint.xml']:
+for name in ['ui-audit-build.log', 'ui-audit-lint.log', 'ui-apk-verification.txt', 'ui-api25.txt', 'ui-device-test-status.txt', 'ui-lint.txt', 'ui-lint.xml',
+             'startup-build.log', 'startup-lint.log', 'startup-lint.txt', 'startup-lint.xml', 'startup-apk-verification.txt', 'startup-api25.txt', 'startup-focused-tests.log']:
     path = ROOT / 'artifacts' / name
     if path.is_file():
         files.append(path)
-for pattern in ['before-*.png', 'current-*.png']:
+for pattern in ['before-*.png', 'current-*.png', 'startup-*.png']:
     files.extend((ROOT / 'artifacts/ui').glob(pattern))
 archive = ROOT / 'artifacts' / SOURCE_NAME
 with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as output:

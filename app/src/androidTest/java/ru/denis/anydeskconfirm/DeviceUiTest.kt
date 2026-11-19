@@ -25,7 +25,7 @@ class DeviceUiTest {
                 val density = activity.resources.displayMetrics.density
                 assertTrue(activity.findViewById<TextView>(R.id.title).text.isNotEmpty())
                 assertTrue(activity.findViewById<TextView>(R.id.app_version).text.isNotEmpty())
-                for (id in listOf(R.id.open_accessibility, R.id.auto_confirm, R.id.remember, R.id.refresh)) {
+                for (id in listOf(R.id.open_accessibility, R.id.auto_confirm, R.id.remember, R.id.screen_access, R.id.refresh)) {
                     val control = activity.findViewById<View>(id)
                     assertTrue(control.width >= 48 * density && control.height >= 48 * density)
                     val rect = Rect(0, 0, control.width, control.height)

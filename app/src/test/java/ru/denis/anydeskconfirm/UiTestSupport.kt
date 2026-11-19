@@ -94,11 +94,12 @@ internal object UiTestSupport {
     }
 
     private fun checkTargets(activity: MainActivity, scenario: String) {
-        for (id in listOf(R.id.auto_confirm, R.id.remember, R.id.open_accessibility, R.id.refresh, R.id.toggle_diagnostics, R.id.toggle_miui)) {
+        for (id in listOf(R.id.auto_confirm, R.id.remember, R.id.screen_access, R.id.open_accessibility, R.id.refresh, R.id.toggle_diagnostics, R.id.toggle_miui)) {
             val view = activity.findViewById<View>(id)
             assertTrue("Small touch target: $scenario id=$id", view.width >= 48 && view.height >= 48)
         }
-        for ((labelId, controlId) in listOf(R.id.auto_confirm_label to R.id.auto_confirm, R.id.remember_label to R.id.remember)) {
+        for ((labelId, controlId) in listOf(R.id.auto_confirm_label to R.id.auto_confirm, R.id.remember_label to R.id.remember,
+            R.id.screen_access_label to R.id.screen_access)) {
             val label = activity.findViewById<View>(labelId)
             val control = activity.findViewById<View>(controlId)
             assertFalse("Label overlaps toggle: $scenario", Rect.intersects(

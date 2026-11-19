@@ -38,6 +38,7 @@ object DialogDetector {
         "anydesk will start capturing everything that's displayed on your screen"
     )
     private val buttons = setOf("начать", "start now", "start")
+    fun isProjectionMessage(text: String): Boolean = normalize(text) in messages
 
     fun detect(window: DialogWindow, anyDeskInstalled: Boolean): Detection {
         if (window.packageName != SYSTEM_UI) return Detection()
@@ -49,7 +50,7 @@ object DialogDetector {
         if (!anyDeskInstalled) return Detection(rejection = "Пакет AnyDesk не установлен или отключён")
         if (window.nodes.any { it.windowId != window.windowId || it.packageName != SYSTEM_UI })
             return Detection(rejection = "Неоднозначная принадлежность элементов окна")
-        if (visible.none { normalize(it.text) in messages })
+        if (visible.none { isProjectionMessage(it.text) })
             return Detection(rejection = "Неизвестный текст запроса AnyDesk: нажатие запрещено")
         val candidates = visible.filter {
             it.viewId == BUTTON_ID && normalize(it.text) in buttons && it.className == "android.widget.Button"

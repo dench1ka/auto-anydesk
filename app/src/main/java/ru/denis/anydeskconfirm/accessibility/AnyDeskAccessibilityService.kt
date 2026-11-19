@@ -8,6 +8,8 @@ import android.os.SystemClock
 import android.view.accessibility.AccessibilityEvent
 import ru.denis.anydeskconfirm.diagnostics.DiagnosticLogger
 import ru.denis.anydeskconfirm.settings.SettingsRepository
+import ru.denis.anydeskconfirm.startup.StartupCoordinator
+import ru.denis.anydeskconfirm.startup.WakeSignal
 
 class AnyDeskAccessibilityService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
@@ -20,8 +22,9 @@ class AnyDeskAccessibilityService : AccessibilityService() {
     private var lastRejectionTime = 0L
     private val check = Runnable { pending = false; inspect() }
     private val preferencesListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == SettingsRepository.KEY_AUTOMATION) {
-            if (settings.automationEnabled) schedule(120) else cancel()
+        if (key == SettingsRepository.KEY_AUTOMATION || key == SettingsRepository.KEY_SCREEN_ACCESS) {
+            if (settings.automationEnabled) { StartupCoordinator.requestWake(this); schedule(120) }
+            else { cancel(); StartupCoordinator.release() }
         }
     }
 
@@ -34,6 +37,7 @@ class AnyDeskAccessibilityService : AccessibilityService() {
         listening = true
         ServiceState.connected = true
         logger.lifecycle("Служба подключена Android")
+        StartupCoordinator.requestWake(this)
         schedule(120) // One initial check; no polling loop.
     }
 
@@ -45,6 +49,9 @@ class AnyDeskAccessibilityService : AccessibilityService() {
         val pkg = event.packageName?.toString()
         if (event.eventType != AccessibilityEvent.TYPE_WINDOWS_CHANGED &&
             pkg != DialogDetector.SYSTEM_UI && pkg != DialogDetector.ANYDESK) return
+        if (settings.screenAccessEnabled && WakeSignal.matches(event.eventType, pkg, event.text)) {
+            StartupCoordinator.requestWake(this)
+        }
         schedule(120)
     }
 
@@ -117,6 +124,7 @@ class AnyDeskAccessibilityService : AccessibilityService() {
         ServiceState.connected = false
         cancel()
         stopListening()
+        StartupCoordinator.release()
         if (::logger.isInitialized) logger.lifecycle("Служба отключена Android")
         return super.onUnbind(intent)
     }
@@ -125,6 +133,7 @@ class AnyDeskAccessibilityService : AccessibilityService() {
         ServiceState.connected = false
         cancel()
         stopListening()
+        StartupCoordinator.release()
         if (::logger.isInitialized) logger.lifecycle("Процесс службы завершает работу")
         super.onDestroy()
     }

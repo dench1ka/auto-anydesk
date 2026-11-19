@@ -21,6 +21,8 @@ import android.widget.LinearLayout
 import ru.denis.anydeskconfirm.accessibility.AnyDeskAccessibilityService
 import ru.denis.anydeskconfirm.accessibility.ServiceState
 import ru.denis.anydeskconfirm.settings.SettingsRepository
+import ru.denis.anydeskconfirm.startup.StartupCoordinator
+import ru.denis.anydeskconfirm.startup.StartupSettings
 import java.text.DateFormat
 import java.util.Date
 
@@ -38,6 +40,7 @@ class MainActivity : Activity() {
         findViewById<TextView>(R.id.app_version).text = getString(R.string.version_format, version)
         adaptSettingRow(R.id.automation_row, R.id.auto_confirm_label, R.id.auto_confirm)
         adaptSettingRow(R.id.remember_row, R.id.remember_label, R.id.remember)
+        adaptSettingRow(R.id.screen_access_row, R.id.screen_access_label, R.id.screen_access)
         findViewById<Switch>(R.id.auto_confirm).apply {
             isChecked = repository.automationEnabled
             setOnCheckedChangeListener { _, checked -> repository.automationEnabled = checked; updateStatus() }
@@ -48,6 +51,11 @@ class MainActivity : Activity() {
         }
         findViewById<TextView>(R.id.auto_confirm_label).setOnClickListener { findViewById<Switch>(R.id.auto_confirm).performClick() }
         findViewById<TextView>(R.id.remember_label).setOnClickListener { findViewById<CheckBox>(R.id.remember).performClick() }
+        findViewById<CheckBox>(R.id.screen_access).apply {
+            isChecked = repository.screenAccessEnabled
+            setOnCheckedChangeListener { _, checked -> repository.screenAccessEnabled = checked; updateStatus() }
+        }
+        findViewById<TextView>(R.id.screen_access_label).setOnClickListener { findViewById<CheckBox>(R.id.screen_access).performClick() }
         findViewById<Button>(R.id.open_accessibility).setOnClickListener {
             try { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
             catch (_: RuntimeException) { Toast.makeText(this, R.string.settings_error, Toast.LENGTH_LONG).show() }
@@ -126,6 +134,13 @@ class MainActivity : Activity() {
         findViewById<CheckBox>(R.id.remember).apply {
             if (isChecked != repository.useRemember) isChecked = repository.useRemember
         }
+        findViewById<CheckBox>(R.id.screen_access).apply {
+            if (isChecked != repository.screenAccessEnabled) isChecked = repository.screenAccessEnabled
+            isEnabled = Build.VERSION.SDK_INT == 25 || isChecked
+        }
+        findViewById<TextView>(R.id.screen_access_status).text = if (!repository.screenAccessEnabled)
+            getString(R.string.screen_access_disabled)
+        else StartupCoordinator.blockedReason(this) ?: StartupSettings(this).lastMessage
         val manager = getSystemService(ACCESSIBILITY_SERVICE) as AccessibilityManager
         val expected = ComponentName(this, AnyDeskAccessibilityService::class.java)
         val enabled = manager.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_ALL_MASK).any {
